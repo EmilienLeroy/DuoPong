@@ -1,13 +1,16 @@
-extends Area2D
+extends KinematicBody2D
 
-
-export var speed = 200;
-var direction;
+export var speed = 300;
+var direction = Vector2.ZERO;
 
 func init(d, p):
-	direction = d;
+	direction = d.normalized();
 	position = p;
 
-func _process(delta):
-	speed += delta * 2;
-	position += speed * delta * direction;
+func _physics_process(delta):
+	var collision_info = move_and_collide(direction * speed * delta);
+	
+	if (!collision_info):
+		return;
+
+	direction = direction.bounce(collision_info.normal)

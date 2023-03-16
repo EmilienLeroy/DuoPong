@@ -7,20 +7,18 @@ var offset = 100;
 func _ready():
 	randomize();
 
-	add_player(true, -1);
-	add_player(false, 1);
-	add_ball(Vector2.DOWN);
-	
+	add_player(true);
+	add_player(false);
+	add_ball(Vector2(rand_range(0.5, 5), get_random_direction()));
 	pass
 
 
-func add_player(playable, ball_direction):
+func add_player(playable):
 	var player = Player.instance();
 	
 	add_child(player);
 	
 	player.playable = playable;
-	player.ball_direction = ball_direction;
 	player.global_position.x = (get_viewport_rect().size / 2).x
 	
 	if (playable):
@@ -37,3 +35,9 @@ func add_ball(direction):
 	add_child(ball);
 	
 	return ball;
+
+func get_random_direction():
+	if randi() % 2 == 0:
+		return 1
+	else:
+		return -1
