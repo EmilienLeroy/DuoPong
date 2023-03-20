@@ -1,20 +1,35 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://entities/player/player.gd" type="Script" id=1]
+[ext_resource path="res://assets/player.png" type="Texture" id=2]
+[ext_resource path="res://assets/color.gdshader" type="Shader" id=3]
 
-[sub_resource type="CubeMesh" id=1]
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 3 )
+shader_param/color = Color( 1.2, 1.2, 1.2, 1 )
 
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 55, 14.5 )
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 45.5, 10 )
+
+[sub_resource type="CircleShape2D" id=2]
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 1 )
 
-[node name="Texture" type="MeshInstance2D" parent="."]
-position = Vector2( -0.125, 0.16129 )
-scale = Vector2( 54.875, 14.1613 )
-mesh = SubResource( 1 )
+[node name="Sprite" type="Sprite" parent="."]
+material = SubResource( 4 )
+position = Vector2( -0.437504, -0.124999 )
+scale = Vector2( 0.193041, 0.189904 )
+texture = ExtResource( 2 )
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2( -0.25, 0.5 )
+position = Vector2( -0.5, 0 )
+shape = SubResource( 1 )
+
+[node name="CollisionLeft" type="CollisionShape2D" parent="."]
+position = Vector2( -45, 0 )
+shape = SubResource( 2 )
+
+[node name="CollisionRight" type="CollisionShape2D" parent="."]
+position = Vector2( 44, 0 )
 shape = SubResource( 2 )
