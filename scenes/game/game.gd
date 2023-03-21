@@ -1,5 +1,10 @@
 extends Node2D
 
+enum Position {
+	Top,
+	Bottom
+}
+
 var Player = preload("res://entities/player/player.tscn");
 var Ball = preload("res://entities/ball/ball.tscn");
 var offset = 100;
@@ -8,15 +13,15 @@ var scores = [0, 0];
 func _ready():
 	randomize();
 
-	add_player(true);
-	add_player(false);
+	add_player(true, Position.Bottom);
+	add_player(true, Position.Top);
 	add_ball(get_random_direction());
 	
 	$Walls.connect("goal", self, "on_goal");
 	pass
 
 
-func add_player(playable):
+func add_player(playable, position):
 	var player = Player.instance();
 	
 	add_child(player);
@@ -24,7 +29,7 @@ func add_player(playable):
 	player.playable = playable;
 	player.global_position.x = (get_viewport_rect().size / 2).x
 	
-	if (playable):
+	if (position == Position.Top):
 		player.global_position.y = get_viewport_rect().size.y - offset;
 	else:
 		player.global_position.y = offset;
@@ -40,7 +45,7 @@ func add_ball(direction):
 	return ball;
 
 func get_random_direction():
-	var x = rand_range(0.5, 5);
+	var x = rand_range(-1, 1);
 	
 	if randi() % 2 == 0:
 		return Vector2(x, 1);
