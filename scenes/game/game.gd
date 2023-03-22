@@ -61,7 +61,7 @@ func update_scores(scores):
 	$Canvas/ScoreTop.text = str(scores[1]);
 
 func on_goal(ball, goal):
-	ball.queue_free();
+	ball.destroy();
 	add_ball(get_random_direction());
 	increase_score(scores, goal);
 	update_scores(scores);
