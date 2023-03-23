@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0.0147783, 0.988455 ), 0.0, 0.0, 0, 0, Vector2( 0.965517, 0.0334996 ), -2.11018, 0.0, 0, 0 ]
+
+[node name="CollisionParticule" type="CPUParticles2D"]
+modulate = Color( 2, 2, 2, 1 )
+emitting = false
+amount = 20
+one_shot = true
+explosiveness = 1.0
+local_coords = false
+direction = Vector2( 0, 0 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 100.0
+initial_velocity_random = 1.0
+angular_velocity = 26.42
+angular_velocity_random = 1.0
+scale_amount = 7.0
+scale_amount_random = 1.0
+scale_amount_curve = SubResource( 1 )
