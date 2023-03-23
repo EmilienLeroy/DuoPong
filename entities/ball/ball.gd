@@ -24,6 +24,7 @@ func _physics_process(delta):
 		return;
 		
 	speed = speed + increase_speed;
+	$FollowParticles.scale_amount += 0.25;
 
 func add_collision_particles():
 	var particles = CollisionParticle.instance();
