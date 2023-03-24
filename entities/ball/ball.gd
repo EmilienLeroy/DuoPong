@@ -47,6 +47,10 @@ func add_goal_particles(direction):
 	return particles;
 
 func destroy(goal):
+	yield(get_tree().create_timer(0.05), "timeout");
+	
 	add_goal_particles(goal);
+	GlobalCamera.shake();
+	
 	yield(get_tree().create_timer(5.0), "timeout");
 	queue_free();
