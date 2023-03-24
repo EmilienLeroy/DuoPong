@@ -3,8 +3,8 @@ extends StaticBody2D
 signal goal;
 
 enum Goal {
-	Top,
-	Bottom
+	Top = 1,
+	Bottom = -1
 }
 
 func _ready():

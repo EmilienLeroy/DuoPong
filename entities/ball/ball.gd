@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 var CollisionParticle = preload("res://entities/ball/particles/collision.tscn");
+var GoalParticle = preload("res://entities/ball/particles/goal.tscn");
 
 export var speed = 350;
 export var max_speed = 1000;
@@ -34,7 +35,18 @@ func add_collision_particles():
 	particles.emitting = true;
 	
 	return particles;
+
+func add_goal_particles(direction):
+	var particles = GoalParticle.instance();
 	
-func destroy():
+	add_child(particles);
+	particles.global_position = global_position;
+	particles.direction.y = direction;
+	particles.emitting = true;
+	
+	return particles;
+
+func destroy(goal):
+	add_goal_particles(goal);
 	yield(get_tree().create_timer(5.0), "timeout");
 	queue_free();

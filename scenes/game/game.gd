@@ -1,8 +1,8 @@
 extends Node2D
 
 enum Position {
-	Top,
-	Bottom
+	Top = 1,
+	Bottom = -1
 }
 
 var Player = preload("res://entities/player/player.tscn");
@@ -61,7 +61,7 @@ func update_scores(scores):
 	$Canvas/ScoreTop.text = str(scores[1]);
 
 func on_goal(ball, goal):
-	ball.destroy();
+	ball.destroy(goal);
 	add_ball(get_random_direction());
 	increase_score(scores, goal);
 	update_scores(scores);

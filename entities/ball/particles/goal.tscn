@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="Curve" id=1]
+max_value = 3.0
+_data = [ Vector2( 0, 2.33741 ), 0.0, -0.228605, 0, 0, Vector2( 1, 0 ), -7.83161, 0.0, 0, 0 ]
+
+[node name="Goal" type="CPUParticles2D"]
+modulate = Color( 1.5, 1.5, 1.5, 1 )
+emitting = false
+amount = 40
+lifetime = 3.0
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+local_coords = false
+emission_shape = 2
+emission_rect_extents = Vector2( 100, 0 )
+direction = Vector2( 0, -1 )
+gravity = Vector2( 0, 0 )
+initial_velocity = 200.0
+initial_velocity_random = 1.0
+angular_velocity = 132.11
+angular_velocity_random = 1.0
+radial_accel = 16.51
+radial_accel_random = 1.0
+scale_amount = 5.0
+scale_amount_random = 1.0
+scale_amount_curve = SubResource( 1 )
