@@ -23,6 +23,8 @@ func _ready():
 func add_player(playable, position):
 	var player = Player.instance();
 	
+	player.goal_position = position;
+	
 	add_child(player);
 	
 	player.playable = playable;
