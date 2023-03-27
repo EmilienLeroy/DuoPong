@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://entities/ball/ball.gd" type="Script" id=1]
 
@@ -8,6 +8,37 @@ _data = [ Vector2( 0, 1 ), 0.0, -0.0236932, 0, 0, Vector2( 1, 0 ), -1.82882, 0.0
 [sub_resource type="SphereMesh" id=1]
 
 [sub_resource type="CircleShape2D" id=2]
+
+[sub_resource type="Animation" id=6]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Texture:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 9.76077, 9.76077 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "spawn"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/path = NodePath("Texture:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.7 ),
+"transitions": PoolRealArray( 0.233258, 0.233258 ),
+"update": 0,
+"values": [ Vector2( 1e-05, 1e-05 ), Vector2( 9.76077, 9.76077 ) ]
+}
 
 [node name="Ball" type="KinematicBody2D" groups=["ball"]]
 script = ExtResource( 1 )
@@ -41,3 +72,7 @@ mesh = SubResource( 1 )
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource( 2 )
+
+[node name="Animation" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 6 )
+anims/spawn = SubResource( 5 )

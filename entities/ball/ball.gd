@@ -11,6 +11,9 @@ var direction = Vector2.ZERO;
 func init(d, p):
 	direction = d.normalized();
 	position = p;
+	
+func _ready():
+	$Animation.play("spawn");
 
 func _physics_process(delta):
 	var collision_info = move_and_collide(direction * speed * delta);
