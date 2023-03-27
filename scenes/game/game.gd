@@ -1,14 +1,13 @@
 extends Node2D
 
-enum Position {
-	Top = 1,
-	Bottom = -1
-}
-
 var Player = preload("res://entities/player/player.tscn");
 var Ball = preload("res://entities/ball/ball.tscn");
+
 var offset = 100;
-var scores = [0, 0];
+var scores = {
+	Position.Top: 0,
+	Position.Bottom: 0,
+}
 
 func _ready():
 	randomize();
@@ -57,8 +56,8 @@ func increase_score(scores, goal):
 	scores[goal] = scores[goal] + 1; 
 
 func update_scores(scores):
-	$Canvas/ScoreBottom.text = str(scores[0]);
-	$Canvas/ScoreTop.text = str(scores[1]);
+	$Canvas/ScoreBottom.text = str(scores[Position.Top]);
+	$Canvas/ScoreTop.text = str(scores[Position.Bottom]);
 
 func on_goal(ball, goal):
 	ball.destroy(goal);

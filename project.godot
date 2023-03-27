@@ -17,6 +17,7 @@ config/icon="res://icon.png"
 [autoload]
 
 GlobalCamera="*res://entities/camera/camera.tscn"
+Position="*res://utils/position.gd"
 
 [display]
 
