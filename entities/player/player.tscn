@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://entities/player/player.gd" type="Script" id=1]
 [ext_resource path="res://assets/player.png" type="Texture" id=2]
@@ -18,6 +18,15 @@ extents = Vector2( 45.5, 10 )
 
 [sub_resource type="RectangleShape2D" id=5]
 extents = Vector2( 120.5, 52 )
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 45.5, 11 )
+
+[sub_resource type="CircleShape2D" id=8]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id=9]
+radius = 11.0
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -63,3 +72,16 @@ shape = SubResource( 2 )
 [node name="Zone" type="CollisionShape2D" parent="Touch"]
 position = Vector2( -0.5, 0 )
 shape = SubResource( 5 )
+
+[node name="HitBox" type="Area2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="HitBox"]
+shape = SubResource( 7 )
+
+[node name="CollisionLeft" type="CollisionShape2D" parent="HitBox"]
+position = Vector2( -45, 0 )
+shape = SubResource( 8 )
+
+[node name="CollisionRight" type="CollisionShape2D" parent="HitBox"]
+position = Vector2( 44, 0 )
+shape = SubResource( 9 )

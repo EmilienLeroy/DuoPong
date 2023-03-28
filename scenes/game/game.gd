@@ -12,18 +12,19 @@ var scores = {
 func _ready():
 	randomize();
 
-	add_player(true, Position.Bottom);
-	add_player(true, Position.Top);
+	add_player(true, Position.Bottom, Color(1.3, 0.7, 1));
+	add_player(true, Position.Top, Color(0.5, 1, 1.3));
 	add_ball(get_random_direction());
 	
 	$Walls.connect("goal", self, "on_goal");
 	pass
 
 
-func add_player(playable, position):
+func add_player(playable, position, color):
 	var player = Player.instance();
 	
 	player.goal_position = position;
+	player.color = color;
 	
 	add_child(player);
 	
