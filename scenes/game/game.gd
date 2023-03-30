@@ -59,8 +59,8 @@ func increase_score(scores, goal):
 	scores[goal] = scores[goal] + 1; 
 
 func update_scores(scores):
-	$Canvas/ScoreBottom.text = str(scores[Position.Top]);
-	$Canvas/ScoreTop.text = str(scores[Position.Bottom]);
+	$ScoreBottom.update_score(scores[Position.Top]);
+	$ScoreTop.update_score(scores[Position.Bottom]);
 
 func on_goal(ball, goal):
 	ball.destroy(goal);
