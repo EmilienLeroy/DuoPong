@@ -11,3 +11,6 @@ func _ready():
 
 func _player_connected(id):
 	print(id)
+
+remote func register(info):
+	print(info);
