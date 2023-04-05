@@ -13,5 +13,11 @@ func _player_connected(id):
 	if (id != 1):
 		return;
 	
-	rpc_id(id, 'register', { name = 'test' });
+	create_room();
 	pass
+	
+func create_room():
+	rpc_id(1, 'create_room');
+
+remote func room_created(room):
+	print(room)
