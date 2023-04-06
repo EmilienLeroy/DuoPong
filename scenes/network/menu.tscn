@@ -1,0 +1,17 @@
+[gd_scene format=2]
+
+[node name="Menu" type="Node2D"]
+
+[node name="Create" type="Button" parent="."]
+margin_left = 108.0
+margin_top = 235.0
+margin_right = 257.0
+margin_bottom = 275.0
+text = "create a room"
+
+[node name="Join" type="Button" parent="."]
+margin_left = 107.0
+margin_top = 294.0
+margin_right = 256.0
+margin_bottom = 334.0
+text = "join"
