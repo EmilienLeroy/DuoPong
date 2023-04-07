@@ -10,6 +10,8 @@ func _ready():
 	else: 
 		peer.create_client('127.0.0.1', 3000);
 		$Menu/Create.connect("button_down", self, "create_room");
+		$Menu/Join.connect("button_down", self, "go_join_room");
+		$Join.connect("join_room", self, "on_join_room");
 		
 	get_tree().network_peer = peer;
 	pass
@@ -21,7 +23,7 @@ func get_room(id):
 			return room;
 	
 	return null;
-
+	
 remote func create_new_room():
 	var id = get_tree().get_rpc_sender_id();	
 	var room = {
@@ -46,7 +48,24 @@ func rpc_to_room(id, name, data):
 func create_room():
 	rpc_id(1, 'create_new_room');
 
+func on_join_room(room):
+	rpc_id(1, 'join_room', room);
+
 remote func room_created(room):
 	Router.goto_scene('res://scenes/network/lobby.tscn', { "room": room });
+
+remote func join_room(room_id):
+	var id = get_tree().get_rpc_sender_id();
+	var room = get_room(int(room_id));
+	
+	if (!room):
+		return;
+	
+	room.players.append(id);
+	# TODO: update lobby
+
+func go_join_room():
+	$Menu.hide();
+	$Join.show();
 
 
