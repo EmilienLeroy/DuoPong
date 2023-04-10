@@ -2,10 +2,8 @@ extends Node2D
 
 var room = 0;
 
-func init(data):
-	room = data.room;
+func set_room(r):
+	room = r;
+	$Code.text = "Code: " + str(room);
 
-func _ready():
-	$Code.text = "Code: " + str(room)
-	pass
 

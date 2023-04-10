@@ -25,9 +25,11 @@ func get_room(id):
 	return null;
 	
 remote func create_new_room():
+	var rng = RandomNumberGenerator.new();
+	
 	var id = get_tree().get_rpc_sender_id();	
 	var room = {
-		id = randi(),
+		id = rng.randi_range(0, 9999),
 		players = [
 			id,
 		],
@@ -51,8 +53,6 @@ func create_room():
 func on_join_room(room):
 	rpc_id(1, 'join_room', room);
 
-remote func room_created(room):
-	Router.goto_scene('res://scenes/network/lobby.tscn', { "room": room });
 
 remote func join_room(room_id):
 	var id = get_tree().get_rpc_sender_id();
@@ -62,10 +62,19 @@ remote func join_room(room_id):
 		return;
 	
 	room.players.append(id);
-	# TODO: update lobby
+	rpc_id(id, 'go_room', room);
 
 func go_join_room():
 	$Menu.hide();
 	$Join.show();
 
+remote func room_created(room):
+	$Menu.hide();
+	$Lobby.set_room(room);
+	$Lobby.show();
 
+remote func go_room(room):
+	$Menu.hide();
+	$Join.hide();
+	$Lobby.set_room(room.id);
+	$Lobby.show();
