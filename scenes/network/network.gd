@@ -24,19 +24,22 @@ func get_room(id):
 	
 	return null;
 	
-remote func create_new_room():
+remote func create_new_room(name):
 	var rng = RandomNumberGenerator.new();
-	
 	var id = get_tree().get_rpc_sender_id();	
+	
+	rng.randomize();
+	
 	var room = {
 		id = rng.randi_range(0, 9999),
-		players = [
-			id,
-		],
+		players = [{
+			id = id,
+			name = name
+		}],
 	}
 	
 	rooms.append(room);
-	rpc_to_room(room.id, 'room_created', room.id);
+	rpc_to_room(room.id, 'room_created', room);
 	
 func rpc_to_room(id, name, data):
 	var room = get_room(id);
@@ -45,24 +48,38 @@ func rpc_to_room(id, name, data):
 		return;
 		
 	for player in room.players:
-		rpc_id(player, name, data);
+		rpc_id(player.id, name, data);
 	
 func create_room():
-	rpc_id(1, 'create_new_room');
+	rpc_id(1, 'create_new_room', $Menu/Name.text);
 
 func on_join_room(room):
-	rpc_id(1, 'join_room', room);
+	var data = {
+		room = room,
+		name = $Menu/Name.text,
+	}
+	
+	rpc_id(1, 'join_room', data);
 
 
-remote func join_room(room_id):
+remote func join_room(data):
 	var id = get_tree().get_rpc_sender_id();
-	var room = get_room(int(room_id));
+	var room = get_room(int(data.room));
+	var player = {
+		id = id,
+		name = data.name
+	};
 	
 	if (!room):
 		return;
 	
-	room.players.append(id);
+	room.players.append(player);
+	
 	rpc_id(id, 'go_room', room);
+	rpc_to_room(room.id, 'player_enter_room', {
+		room = room,
+		player = player
+	});
 
 func go_join_room():
 	$Menu.hide();
@@ -70,7 +87,8 @@ func go_join_room():
 
 remote func room_created(room):
 	$Menu.hide();
-	$Lobby.set_room(room);
+	$Lobby.set_room(room.id);
+	$Lobby.set_players(room.players);
 	$Lobby.show();
 
 remote func go_room(room):
@@ -78,3 +96,6 @@ remote func go_room(room):
 	$Join.hide();
 	$Lobby.set_room(room.id);
 	$Lobby.show();
+
+remote func player_enter_room(data):
+	$Lobby.set_players(data.room.players);
