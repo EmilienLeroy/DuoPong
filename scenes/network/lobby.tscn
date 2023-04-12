@@ -23,3 +23,10 @@ margin_left = 154.0
 margin_top = 183.0
 margin_right = 194.0
 margin_bottom = 197.0
+
+[node name="Start" type="Button" parent="."]
+margin_left = 114.0
+margin_top = 345.0
+margin_right = 242.0
+margin_bottom = 404.0
+text = "Start"

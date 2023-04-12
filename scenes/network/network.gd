@@ -1,5 +1,6 @@
 extends Node2D
 
+var current_room;
 var rooms = [];
 
 func _ready():
@@ -11,6 +12,7 @@ func _ready():
 		peer.create_client('127.0.0.1', 3000);
 		$Menu/Create.connect("button_down", self, "create_room");
 		$Menu/Join.connect("button_down", self, "go_join_room");
+		$Lobby/Start.connect("button_down", self, "start_game");
 		$Join.connect("join_room", self, "on_join_room");
 		
 	get_tree().network_peer = peer;
@@ -90,12 +92,30 @@ remote func room_created(room):
 	$Lobby.set_room(room.id);
 	$Lobby.set_players(room.players);
 	$Lobby.show();
+	
+	current_room = room;
 
 remote func go_room(room):
 	$Menu.hide();
 	$Join.hide();
 	$Lobby.set_room(room.id);
 	$Lobby.show();
+	
+	current_room = room;
 
 remote func player_enter_room(data):
 	$Lobby.set_players(data.room.players);
+
+func start_game():
+	rpc_id(1, 'start_room_game', current_room);
+	
+remote func start_room_game(room):
+	rpc_to_room(room.id, 'game_started', room);
+
+remote func game_started(room):
+	$Menu.hide();
+	$Join.hide();
+	$Lobby.hide();
+	
+	# TODO: Add players and ball
+	
