@@ -1,7 +1,10 @@
 extends Node2D
 
+var Player = preload("res://entities/player/player.tscn");
+
 var current_room;
 var rooms = [];
+var offset = 100;
 
 func _ready():
 	var peer = NetworkedMultiplayerENet.new();
@@ -26,6 +29,27 @@ func get_room(id):
 	
 	return null;
 	
+func get_player(id, room):
+	for player in room.players:
+		if (player.id == id):
+			return player;
+			
+	return null;
+
+func get_current_player(room):
+	var id = get_tree().get_network_unique_id()
+	
+	return get_player(id, room);
+	
+func get_other_player(room):
+	var id = get_tree().get_network_unique_id()
+	
+	for player in room.players:
+		if (player.id != id):
+			return player;
+			
+	return null;
+
 remote func create_new_room(name):
 	var rng = RandomNumberGenerator.new();
 	var id = get_tree().get_rpc_sender_id();	
@@ -36,7 +60,8 @@ remote func create_new_room(name):
 		id = rng.randi_range(0, 9999),
 		players = [{
 			id = id,
-			name = name
+			name = name,
+			x = 0,
 		}],
 	}
 	
@@ -69,7 +94,8 @@ remote func join_room(data):
 	var room = get_room(int(data.room));
 	var player = {
 		id = id,
-		name = data.name
+		name = data.name,
+		x = 0,
 	};
 	
 	if (!room):
@@ -104,12 +130,13 @@ remote func go_room(room):
 	current_room = room;
 
 remote func player_enter_room(data):
+	current_room = data.room;
 	$Lobby.set_players(data.room.players);
 
 func start_game():
 	rpc_id(1, 'start_room_game', current_room);
 	
-remote func start_room_game(room):
+remote func start_room_game(room):	
 	rpc_to_room(room.id, 'game_started', room);
 
 remote func game_started(room):
@@ -117,5 +144,55 @@ remote func game_started(room):
 	$Join.hide();
 	$Lobby.hide();
 	
+	current_room.players[0].instance = Player.instance();
+	current_room.players[1].instance = Player.instance();
+	
+	current_room.players[0].x = (get_viewport_rect().size / 2).x;
+	current_room.players[1].x = (get_viewport_rect().size / 2).x;
+	
+	var current = get_current_player(current_room);
+	var other = get_other_player(current_room);
+	
+	add_player(other.instance, false, Position.Bottom, Color(1.3, 0.7, 1));
+	add_player(current.instance, true, Position.Top, Color(0.5, 1, 1.3));
+	
+	current.instance.connect('move', self, 'on_player_move');
 	# TODO: Add players and ball
+	
+func add_player(player, playable, goal, color):	
+	player.goal_position = goal;
+	player.color = color;
+	
+	add_child(player);
+	
+	player.playable = playable;
+	player.global_position.x = (get_viewport_rect().size / 2).x
+	
+	if (goal == Position.Top):
+		player.global_position.y = get_viewport_rect().size.y - offset;
+	else:
+		player.global_position.y = offset;
+
+	return player;
+
+func on_player_move(x):
+	rpc_id(1, 'update_player', {
+		room = current_room,
+		x = x,
+	});
+	
+remote func update_player(data):
+	var id = get_tree().get_rpc_sender_id();
+	var player = get_player(id, data.room);
+	
+	player.x = data.x;
+	
+	rpc_to_room(data.room.id, 'update_players_position', data.room);
+	
+remote func update_players_position(room):
+	current_room.players[0].x = room.players[0].x;
+	current_room.players[1].x = room.players[1].x;
+	
+	for player in current_room.players:
+		player.instance.position.x = player.x;
 	
