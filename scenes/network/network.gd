@@ -1,6 +1,7 @@
 extends Node2D
 
 var Player = preload("res://entities/player/player.tscn");
+var Ball = preload("res://entities/ball/ball.tscn");
 
 var current_room;
 var rooms = [];
@@ -61,6 +62,7 @@ remote func create_new_room(name):
 		players = [{
 			id = id,
 			name = name,
+			ball = Vector2.ZERO,
 			x = 0,
 		}],
 	}
@@ -95,6 +97,7 @@ remote func join_room(data):
 	var player = {
 		id = id,
 		name = data.name,
+		ball = Vector2.ZERO,
 		x = 0,
 	};
 	
@@ -137,12 +140,20 @@ func start_game():
 	rpc_id(1, 'start_room_game', current_room);
 	
 remote func start_room_game(room):	
+	var direction = get_random_direction();
+	var invert_direction = Vector2(-direction.x, -direction.y);
+	
+	room.players[0].ball = direction;
+	room.players[1].ball = invert_direction;
+	
 	rpc_to_room(room.id, 'game_started', room);
 
 remote func game_started(room):
 	$Menu.hide();
 	$Join.hide();
 	$Lobby.hide();
+	
+	current_room = room;
 	
 	current_room.players[0].instance = Player.instance();
 	current_room.players[1].instance = Player.instance();
@@ -155,7 +166,9 @@ remote func game_started(room):
 	
 	add_player(other.instance, false, Position.Bottom, Color(1.3, 0.7, 1));
 	add_player(current.instance, true, Position.Top, Color(0.5, 1, 1.3));
+	add_ball(current.ball);
 	
+	$Walls.connect("goal", self, "on_goal");
 	current.instance.connect('move', self, 'on_player_move');
 	# TODO: Add players and ball
 	
@@ -175,12 +188,31 @@ func add_player(player, playable, goal, color):
 
 	return player;
 
+func add_ball(direction):
+	var ball = Ball.instance();
+	
+	ball.init(direction, get_viewport_rect().size / 2);
+	call_deferred("add_child", ball);
+	
+	return ball;
+
+func get_random_direction():
+	var x = rand_range(-1, 1);
+	
+	if randi() % 2 == 0:
+		return Vector2(x, 1);
+	else:
+		return Vector2(x, -1);
+
 func on_player_move(x):
 	rpc_id(1, 'update_player', {
 		room = current_room,
 		x = x,
 	});
-	
+
+func on_goal(ball, goal):
+	ball.destroy(goal);
+
 remote func update_player(data):
 	var id = get_tree().get_rpc_sender_id();
 	var player = get_player(id, data.room);
@@ -190,9 +222,12 @@ remote func update_player(data):
 	rpc_to_room(data.room.id, 'update_players_position', data.room);
 	
 remote func update_players_position(room):
+	var current = get_current_player(current_room);
+	var other = get_other_player(current_room);
+	
 	current_room.players[0].x = room.players[0].x;
 	current_room.players[1].x = room.players[1].x;
 	
-	for player in current_room.players:
-		player.instance.position.x = player.x;
+	current.instance.position.x = current.x;
+	other.instance.position.x = get_viewport_rect().size.x - other.x;
 	
