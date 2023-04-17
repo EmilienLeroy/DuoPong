@@ -63,6 +63,7 @@ remote func create_new_room(name):
 			id = id,
 			name = name,
 			ball = Vector2.ZERO,
+			score = 0,
 			x = 0,
 		}],
 	}
@@ -98,6 +99,7 @@ remote func join_room(data):
 		id = id,
 		name = data.name,
 		ball = Vector2.ZERO,
+		score = 0,
 		x = 0,
 	};
 	
@@ -170,7 +172,6 @@ remote func game_started(room):
 	
 	$Walls.connect("goal", self, "on_goal");
 	current.instance.connect('move', self, 'on_player_move');
-	# TODO: Add players and ball
 	
 func add_player(player, playable, goal, color):	
 	player.goal_position = goal;
@@ -212,6 +213,14 @@ func on_player_move(x):
 
 func on_goal(ball, goal):
 	ball.destroy(goal);
+	
+	if (goal != Position.Top):
+		return;
+	
+	rpc_id(1, 'increase_score', {
+		room = current_room,
+		goal = goal
+	});
 
 remote func update_player(data):
 	var id = get_tree().get_rpc_sender_id();
@@ -220,6 +229,15 @@ remote func update_player(data):
 	player.x = data.x;
 	
 	rpc_to_room(data.room.id, 'update_players_position', data.room);
+
+
+remote func increase_score(data):
+	var id = get_tree().get_rpc_sender_id();
+	var player = get_player(id, data.room);
+	
+	player.score = player.score + 1;
+	
+	# TODO: create new ball with random direction
 	
 remote func update_players_position(room):
 	var current = get_current_player(current_room);
