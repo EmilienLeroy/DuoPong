@@ -142,11 +142,7 @@ func start_game():
 	rpc_id(1, 'start_room_game', current_room);
 	
 remote func start_room_game(room):	
-	var direction = get_random_direction();
-	var invert_direction = Vector2(-direction.x, -direction.y);
-	
-	room.players[0].ball = direction;
-	room.players[1].ball = invert_direction;
+	room = update_ball(room);
 	
 	rpc_to_room(room.id, 'game_started', room);
 
@@ -188,6 +184,20 @@ func add_player(player, playable, goal, color):
 		player.global_position.y = offset;
 
 	return player;
+	
+remote func spawn_ball(room):	
+	var current = get_current_player(room);
+	
+	add_ball(current.ball);
+	
+func update_ball(room):
+	var direction = get_random_direction();
+	var invert_direction = Vector2(-direction.x, -direction.y);
+	
+	room.players[0].ball = direction;
+	room.players[1].ball = invert_direction;
+	
+	return room;
 
 func add_ball(direction):
 	var ball = Ball.instance();
@@ -237,7 +247,8 @@ remote func increase_score(data):
 	
 	player.score = player.score + 1;
 	
-	# TODO: create new ball with random direction
+	update_ball(data.room);
+	rpc_to_room(data.room.id, 'spawn_ball', data.room);
 	
 remote func update_players_position(room):
 	var current = get_current_player(current_room);
