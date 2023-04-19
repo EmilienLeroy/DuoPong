@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+signal new_direction;
+
 var CollisionParticle = preload("res://entities/ball/particles/collision.tscn");
 var GoalParticle = preload("res://entities/ball/particles/goal.tscn");
 
@@ -23,6 +25,7 @@ func _physics_process(delta):
 		return;
 	
 	direction = direction.bounce(collision_info.normal);
+	emit_signal("new_direction", direction);
 	add_collision_particles();
 	
 	if (speed > max_speed):

@@ -4,6 +4,7 @@ var Player = preload("res://entities/player/player.tscn");
 var Ball = preload("res://entities/ball/ball.tscn");
 
 var current_room;
+var current_ball;
 var rooms = [];
 var offset = 100;
 
@@ -164,7 +165,7 @@ remote func game_started(room):
 	
 	add_player(other.instance, false, Position.Bottom, Color(1.3, 0.7, 1));
 	add_player(current.instance, true, Position.Top, Color(0.5, 1, 1.3));
-	add_ball(current.ball);
+	current_ball = add_ball(current.ball, current_room.players[0].id == current.id);
 	
 	$Walls.connect("goal", self, "on_goal");
 	current.instance.connect('move', self, 'on_player_move');
@@ -188,7 +189,7 @@ func add_player(player, playable, goal, color):
 remote func spawn_ball(room):	
 	var current = get_current_player(room);
 	
-	add_ball(current.ball);
+	current_ball = add_ball(current.ball, room.players[0].id == current.id);
 	
 func update_ball(room):
 	var direction = get_random_direction();
@@ -199,11 +200,14 @@ func update_ball(room):
 	
 	return room;
 
-func add_ball(direction):
+func add_ball(direction, sync_ball):
 	var ball = Ball.instance();
 	
 	ball.init(direction, get_viewport_rect().size / 2);
 	call_deferred("add_child", ball);
+	
+	if (sync_ball):
+		ball.connect("new_direction", self, "on_ball_collision");
 	
 	return ball;
 
@@ -214,6 +218,11 @@ func get_random_direction():
 		return Vector2(x, 1);
 	else:
 		return Vector2(x, -1);
+
+func on_ball_collision(direction):
+	var other = get_other_player(current_room);
+	
+	rpc_id(other.id, 'sync_ball', direction);
 
 func on_player_move(x):
 	rpc_id(1, 'update_player', {
@@ -260,3 +269,7 @@ remote func update_players_position(room):
 	current.instance.position.x = current.x;
 	other.instance.position.x = get_viewport_rect().size.x - other.x;
 	
+remote func sync_ball(direction):
+	var invert_direction = Vector2(-direction.x, -direction.y);
+	
+	current_ball.direction = invert_direction;
