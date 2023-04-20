@@ -25,7 +25,7 @@ func _physics_process(delta):
 		return;
 	
 	direction = direction.bounce(collision_info.normal);
-	emit_signal("new_direction", direction);
+	emit_signal("new_direction", { direction = direction, position = position });
 	add_collision_particles();
 	
 	if (speed > max_speed):

@@ -269,7 +269,12 @@ remote func update_players_position(room):
 	current.instance.position.x = current.x;
 	other.instance.position.x = get_viewport_rect().size.x - other.x;
 	
-remote func sync_ball(direction):
+remote func sync_ball(data):
+	var direction = data.direction;
+	var ball_position = data.position;
+	
 	var invert_direction = Vector2(-direction.x, -direction.y);
 	
+	current_ball.position.x = get_viewport_rect().size.x - ball_position.x;
+	current_ball.position.y = get_viewport_rect().size.y - ball_position.y;
 	current_ball.direction = invert_direction;
