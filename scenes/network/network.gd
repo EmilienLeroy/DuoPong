@@ -151,6 +151,8 @@ remote func game_started(room):
 	$Menu.hide();
 	$Join.hide();
 	$Lobby.hide();
+	$ScoreTop.show();
+	$ScoreBottom.show();
 	
 	current_room = room;
 	
@@ -258,6 +260,7 @@ remote func increase_score(data):
 	
 	update_ball(data.room);
 	rpc_to_room(data.room.id, 'spawn_ball', data.room);
+	rpc_to_room(data.room.id, 'update_score', data.room);
 	
 remote func update_players_position(room):
 	var current = get_current_player(current_room);
@@ -278,3 +281,13 @@ remote func sync_ball(data):
 	current_ball.position.x = get_viewport_rect().size.x - ball_position.x;
 	current_ball.position.y = get_viewport_rect().size.y - ball_position.y;
 	current_ball.direction = invert_direction;
+
+remote func update_score(room):
+	var current = get_current_player(current_room);
+	var other = get_other_player(current_room);
+	
+	current_room.players[0].score = room.players[0].score;
+	current_room.players[1].score = room.players[1].score;
+	
+	$ScoreBottom.update_score(current.score);
+	$ScoreTop.update_score(other.score);
