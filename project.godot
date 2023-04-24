@@ -28,6 +28,11 @@ window/handheld/orientation="portrait"
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
+[global]
+
+network_url="127.0.0.1"
+network_port=3000
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true

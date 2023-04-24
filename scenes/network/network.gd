@@ -9,12 +9,14 @@ var rooms = [];
 var offset = 100;
 
 func _ready():
+	var url = ProjectSettings.get('global/network_url');
+	var port = ProjectSettings.get('global/network_port');
 	var peer = NetworkedMultiplayerENet.new();
 	
 	if "--server" in OS.get_cmdline_args():
-			peer.create_server(3000, 32);
+			peer.create_server(port, 4095);
 	else: 
-		peer.create_client('127.0.0.1', 3000);
+		peer.create_client(url, port);
 		$Menu/Create.connect("button_down", self, "create_room");
 		$Menu/Join.connect("button_down", self, "go_join_room");
 		$Lobby/Start.connect("button_down", self, "start_game");
