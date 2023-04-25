@@ -62,6 +62,9 @@ remote func create_new_room(name):
 	
 	var room = {
 		id = rng.randi_range(0, 9999),
+		config = {
+			score = 5,	
+		},
 		players = [{
 			id = id,
 			name = name,
@@ -260,6 +263,10 @@ remote func increase_score(data):
 	
 	player.score = player.score + 1;
 	
+	if (player.score == data.room.config.score): 
+		rpc_to_room(data.room.id, 'game_over', data.room)
+		return;
+	
 	update_ball(data.room);
 	rpc_to_room(data.room.id, 'spawn_ball', data.room);
 	rpc_to_room(data.room.id, 'update_score', data.room);
@@ -293,3 +300,12 @@ remote func update_score(room):
 	
 	$ScoreBottom.update_score(current.score);
 	$ScoreTop.update_score(other.score);
+
+remote func game_over(room):
+	for player in current_room.players:
+		player.instance.queue_free();
+		
+	$ScoreBottom.hide();
+	$ScoreTop.hide();
+	
+	# TODO: display score and btn to replay
