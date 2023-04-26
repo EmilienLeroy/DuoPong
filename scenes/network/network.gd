@@ -304,8 +304,8 @@ remote func update_score(room):
 remote func game_over(room):
 	for player in current_room.players:
 		player.instance.queue_free();
-		
+	
+	$Score.set_players(room.players);
 	$ScoreBottom.hide();
 	$ScoreTop.hide();
-	
-	# TODO: display score and btn to replay
+	$Score.show();
