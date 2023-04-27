@@ -20,3 +20,10 @@ margin_right = 358.0
 margin_bottom = 110.0
 text = "player"
 align = 1
+
+[node name="Replay" type="Button" parent="."]
+margin_left = 94.0
+margin_top = 226.0
+margin_right = 267.0
+margin_bottom = 282.0
+text = "Replay"

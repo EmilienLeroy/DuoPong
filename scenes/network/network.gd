@@ -20,6 +20,7 @@ func _ready():
 		$Menu/Create.connect("button_down", self, "create_room");
 		$Menu/Join.connect("button_down", self, "go_join_room");
 		$Lobby/Start.connect("button_down", self, "start_game");
+		$Score/Replay.connect("button_down", self, "replay_game");
 		$Join.connect("join_room", self, "on_join_room");
 		
 	get_tree().network_peer = peer;
@@ -133,6 +134,7 @@ remote func room_created(room):
 	current_room = room;
 
 remote func go_room(room):
+	$Score.hide();
 	$Menu.hide();
 	$Join.hide();
 	$Lobby.set_room(room.id);
@@ -151,11 +153,21 @@ remote func start_room_game(room):
 	room = update_ball(room);
 	
 	rpc_to_room(room.id, 'game_started', room);
+	
+func replay_game():
+	for player in current_room.players:
+		player.score = 0;
+
+	go_room(current_room);
 
 remote func game_started(room):
 	$Menu.hide();
 	$Join.hide();
 	$Lobby.hide();
+	
+	$ScoreBottom.update_score(0);
+	$ScoreTop.update_score(0);
+	
 	$ScoreTop.show();
 	$ScoreBottom.show();
 	
