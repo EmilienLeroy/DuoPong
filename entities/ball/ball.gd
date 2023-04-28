@@ -25,14 +25,17 @@ func _physics_process(delta):
 		return;
 	
 	direction = direction.bounce(collision_info.normal);
-	emit_signal("new_direction", { direction = direction, position = position });
 	add_collision_particles();
-	
-	if (speed > max_speed):
-		return;
+
+	if (speed < max_speed):
+		speed = speed + increase_speed;
+		$FollowParticles.scale_amount += 0.25;
 		
-	speed = speed + increase_speed;
-	$FollowParticles.scale_amount += 0.25;
+	emit_signal("new_direction", { 
+		direction = direction, 
+		position = position,
+		speed = speed,
+	});
 
 func add_collision_particles():
 	var particles = CollisionParticle.instance();

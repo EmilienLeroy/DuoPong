@@ -22,6 +22,7 @@ func _ready():
 		$Lobby/Start.connect("button_down", self, "start_game");
 		$Score/Replay.connect("button_down", self, "replay_game");
 		$Score/Leave.connect("button_down", self, "leave_game");
+		$Walls.connect("goal", self, "on_goal");
 		$Join.connect("join_room", self, "on_join_room");
 		
 	get_tree().network_peer = peer;
@@ -188,9 +189,8 @@ remote func game_started(room):
 	
 	add_player(other.instance, false, Position.Bottom, Color(1.3, 0.7, 1));
 	add_player(current.instance, true, Position.Top, Color(0.5, 1, 1.3));
-	current_ball = add_ball(current.ball, current_room.players[0].id == current.id);
 	
-	$Walls.connect("goal", self, "on_goal");
+	current_ball = add_ball(current.ball, current_room.players[0].id == current.id);
 	current.instance.connect('move', self, 'on_player_move');
 	
 func add_player(player, playable, goal, color):	
@@ -306,6 +306,7 @@ remote func sync_ball(data):
 	current_ball.position.x = get_viewport_rect().size.x - ball_position.x;
 	current_ball.position.y = get_viewport_rect().size.y - ball_position.y;
 	current_ball.direction = invert_direction;
+	current_ball.speed = data.speed;
 
 remote func update_score(room):
 	var current = get_current_player(current_room);
