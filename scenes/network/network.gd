@@ -21,6 +21,7 @@ func _ready():
 		$Menu/Join.connect("button_down", self, "go_join_room");
 		$Lobby/Start.connect("button_down", self, "start_game");
 		$Score/Replay.connect("button_down", self, "replay_game");
+		$Score/Leave.connect("button_down", self, "leave_game");
 		$Join.connect("join_room", self, "on_join_room");
 		
 	get_tree().network_peer = peer;
@@ -98,7 +99,6 @@ func on_join_room(room):
 	
 	rpc_id(1, 'join_room', data);
 
-
 remote func join_room(data):
 	var id = get_tree().get_rpc_sender_id();
 	var room = get_room(int(data.room));
@@ -159,6 +159,10 @@ func replay_game():
 		player.score = 0;
 
 	go_room(current_room);
+	
+func leave_game():
+	get_tree().network_peer = null;
+	Router.goto_scene('res://scenes/network/network.tscn');
 
 remote func game_started(room):
 	$Menu.hide();

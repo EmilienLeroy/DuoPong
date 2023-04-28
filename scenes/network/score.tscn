@@ -27,3 +27,10 @@ margin_top = 226.0
 margin_right = 267.0
 margin_bottom = 282.0
 text = "Replay"
+
+[node name="Leave" type="Button" parent="."]
+margin_left = 95.0
+margin_top = 294.0
+margin_right = 267.0
+margin_bottom = 355.0
+text = "Leave"
