@@ -15,6 +15,7 @@ func _ready():
 	
 	if "--server" in OS.get_cmdline_args():
 			peer.create_server(port, 4095);
+			get_tree().connect("network_peer_disconnected", self, "on_player_disconnected");
 	else: 
 		peer.create_client(url, port);
 		$Menu/Create.connect("button_down", self, "create_room");
@@ -36,6 +37,14 @@ func get_room(id):
 	
 	return null;
 	
+func get_room_with_player(id):
+	for room in rooms:
+		for player in room.players:
+			if (player.id == id):
+				return room;
+	
+	return null;
+
 func get_player(id, room):
 	for player in room.players:
 		if (player.id == id):
@@ -56,6 +65,19 @@ func get_other_player(room):
 			return player;
 			
 	return null;
+
+func on_player_disconnected(id):
+	var room = get_room_with_player(id);
+	
+	if (!room):
+		return;
+	
+	room.players.erase(get_player(id, room));
+
+	rpc_to_room(room.id, 'player_leave_room', {
+		room = room
+	});
+	
 
 remote func create_new_room(name):
 	var rng = RandomNumberGenerator.new();
@@ -146,6 +168,11 @@ remote func go_room(room):
 remote func player_enter_room(data):
 	current_room = data.room;
 	$Lobby.set_players(data.room.players);
+	
+remote func player_leave_room(data):
+	$Lobby.set_players(data.room.players);
+	
+	# TODO: display a message if is not in lobby
 
 func start_game():
 	rpc_id(1, 'start_room_game', current_room);
@@ -272,7 +299,6 @@ remote func update_player(data):
 	
 	rpc_to_room(data.room.id, 'update_players_position', data.room);
 
-
 remote func increase_score(data):
 	var id = get_tree().get_rpc_sender_id();
 	var player = get_player(id, data.room);
@@ -294,8 +320,11 @@ remote func update_players_position(room):
 	current_room.players[0].x = room.players[0].x;
 	current_room.players[1].x = room.players[1].x;
 	
-	current.instance.position.x = current.x;
-	other.instance.position.x = get_viewport_rect().size.x - other.x;
+	if (current.instance):
+		current.instance.position.x = current.x;
+	
+	if (other.instance): 
+		other.instance.position.x = get_viewport_rect().size.x - other.x;
 	
 remote func sync_ball(data):
 	var direction = data.direction;
