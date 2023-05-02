@@ -171,8 +171,18 @@ remote func player_enter_room(data):
 	
 remote func player_leave_room(data):
 	$Lobby.set_players(data.room.players);
+	$Score.set_players(data.room.players);
 	
-	# TODO: display a message if is not in lobby
+	for player in current_room.players:
+		if (player.instance):
+			player.instance.queue_free();
+	
+	if (current_ball):
+		current_ball.queue_free();
+		$Score.show();
+		
+	$ScoreTop.hide();
+	$ScoreBottom.hide();
 
 func start_game():
 	rpc_id(1, 'start_room_game', current_room);
