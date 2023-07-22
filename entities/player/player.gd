@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+signal move;
+
 export var playable = true;
 export var goal_position = Position.Top;
 export var color = Color(1.2, 1.2, 1.2);
@@ -20,7 +22,8 @@ func on_input_event(viewport, event, shape_idx):
 	if !event is InputEventScreenDrag or !playable:
 		return	
 
-	position.x = event.position.x
+	position.x = event.position.x;
+	emit_signal("move", position.x);
 
 func on_body_entered(body):
 	if (!body.is_in_group('ball')):

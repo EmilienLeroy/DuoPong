@@ -2,5 +2,6 @@ extends Node2D
 
 
 func _ready():
-	Router.goto_scene("res://scenes/game/game.tscn");
+	Engine.set_target_fps(60);
+	Router.goto_scene("res://scenes/network/network.tscn");
 	pass 
